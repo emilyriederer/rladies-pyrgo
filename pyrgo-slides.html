@@ -1033,9 +1033,11 @@ Emily Riederer
 <span id="cb14-5"><a href=""></a>  <span class="st">'a_dt'</span> : <span class="st">'09/25/1993'</span>,</span>
 <span id="cb14-6"><a href=""></a>  <span class="st">'b_dt'</span> : <span class="st">'06/20/2000'</span></span>
 <span id="cb14-7"><a href=""></a>}).with_columns(</span>
-<span id="cb14-8"><a href=""></a>  cs.string().<span class="bu">str</span>.strip().suffix(<span class="st">"_clean"</span>),</span>
-<span id="cb14-9"><a href=""></a>  cs.ends_with(<span class="st">'dt'</span>).<span class="bu">str</span>.to_datetime(<span class="st">'%m/</span><span class="sc">%d</span><span class="st">/%Y'</span>)</span>
-<span id="cb14-10"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-8"><a href=""></a>  <span class="co"># *replace* existing string columns that should-be dates with dates</span></span>
+<span id="cb14-9"><a href=""></a>  cs.ends_with(<span class="st">'dt'</span>).<span class="bu">str</span>.to_date(<span class="st">'%m/</span><span class="sc">%d</span><span class="st">/%Y'</span>),</span>
+<span id="cb14-10"><a href=""></a>  <span class="co"># *add new* columns by removing whitespace from all other string columns</span></span>
+<span id="cb14-11"><a href=""></a>  (cs.string() <span class="op">&amp;</span> <span class="op">~</span>cs.ends_with(<span class="st">'dt'</span>)).<span class="bu">str</span>.strip_chars().suffix(<span class="st">"_clean"</span>),</span>
+<span id="cb14-12"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div><style>
 .dataframe > thead > tr,
@@ -1044,7 +1046,7 @@ Emily Riederer
   white-space: pre-wrap;
 }
 </style>
-<small>shape: (1, 10)</small>
+<small>shape: (1, 8)</small>
 <table class="dataframe" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
@@ -1056,17 +1058,13 @@ Emily Riederer
 <th data-quarto-table-cell-role="th">x_clean</th>
 <th data-quarto-table-cell-role="th">y_clean</th>
 <th data-quarto-table-cell-role="th">c_clean</th>
-<th data-quarto-table-cell-role="th">a_dt_clean</th>
-<th data-quarto-table-cell-role="th">b_dt_clean</th>
 </tr>
 <tr class="odd">
 <th>str</th>
 <th>str</th>
 <th>str</th>
-<th>datetime[μs]</th>
-<th>datetime[μs]</th>
-<th>str</th>
-<th>str</th>
+<th>date</th>
+<th>date</th>
 <th>str</th>
 <th>str</th>
 <th>str</th>
@@ -1077,13 +1075,11 @@ Emily Riederer
 <td>"a "</td>
 <td>" b "</td>
 <td>"c"</td>
-<td>1993-09-25 00:00:00</td>
-<td>2000-06-20 00:00:00</td>
+<td>1993-09-25</td>
+<td>2000-06-20</td>
 <td>"a"</td>
 <td>"b"</td>
 <td>"c"</td>
-<td>"09/25/1993"</td>
-<td>"06/20/2000"</td>
 </tr>
 </tbody>
 </table>
@@ -1242,12 +1238,12 @@ Emily Riederer
 </thead>
 <tbody>
 <tr class="odd">
-<td>"2"</td>
-<td>[{0,1}, {0,1}]</td>
-</tr>
-<tr class="even">
 <td>"1"</td>
 <td>[{1,0}, {0,1}]</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>[{0,1}, {0,1}]</td>
 </tr>
 </tbody>
 </table>

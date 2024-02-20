@@ -432,8 +432,10 @@ pl.DataFrame({
   'a_dt' : '09/25/1993',
   'b_dt' : '06/20/2000'
 }).with_columns(
-  cs.string().str.strip().suffix("_clean"),
-  cs.ends_with('dt').str.to_datetime('%m/%d/%Y')
+  # *replace* existing string columns that should-be dates with dates
+  cs.ends_with('dt').str.to_date('%m/%d/%Y'),
+  # *add new* columns by removing whitespace from all other string columns
+  (cs.string() & ~cs.ends_with('dt')).str.strip_chars().suffix("_clean"),
 )
 ```
 
