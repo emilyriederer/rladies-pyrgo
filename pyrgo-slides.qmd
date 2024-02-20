@@ -1,0 +1,670 @@
+---
+title: "Python Rgonomics"
+author: "Emily Riederer"
+date: "February 20, 2024"
+format: 
+  revealjs:
+    theme: theme.scss
+execute:
+  freeze: auto
+  echo: true
+highlight-style: "nord"
+---
+
+## Bonjour! {.center-xy}
+
+## Flow = just typing R code
+
+![](https://i.imgur.com/7J1bEaJ.gif)
+
+## Agenda
+
+Today, I want to talk about:
+
+- What it is about R (`tidyverse`) that *feels* so ergonomic
+- How `polars` mirrors these ergonomics in a truly pythonic way
+- Where else we can build up a holistic, ergonomic *developer experience* when working in python?
+
+## The Rgonomics we love
+
+Paraphrasing the [tidyverse design principles](https://design.tidyverse.org/):
+
+> **Composable**: allowing you to solve complex problems by breaking them down into small pieces
+
+> **Consistent**: what you learn about one function or package can be applied to another
+
+> **Human Centered**: designed to support the activities of a human data analyst
+
+## The Rgonomics we love
+
+Paraphrasing the [tidyverse design principles](https://design.tidyverse.org/):
+
+> **Composable**: allowing you to solve complex problems by breaking them down into small pieces
+
+{{< fa square-check >}} atomic tasks  
+{{< fa square-check >}} dataframe as first argument  
+
+> **Consistent**: what you learn about one function or package can be applied to another
+
+{{< fa square-check >}} snake case  
+{{< fa square-check >}} functional paradigm  
+{{< fa square-check >}} similar workflows for similar results  
+
+> **Human Centered**: designed to support the activities of a human data analyst
+
+{{< fa square-check >}} abstraction balances declarative and procedural  
+{{< fa square-check >}} helper functions to express clear but complex tasks simply  
+{{< fa square-check >}} things "just work"  
+
+## The Rgonomics we love don't always translate to `pandas`
+
+Paraphrasing the [tidyverse design principles](https://design.tidyverse.org/):
+
+> **Composable**: allowing you to solve complex problems by breaking them down into small pieces
+
+{{< fa rectangle-xmark >}} not always dataframe-native  
+{{< fa rectangle-xmark >}} more overly-specialized "must know" functions  
+
+> **Consistent**: what you learn about one function or package can be applied to another
+
+{{< fa rectangle-xmark >}} mix of input approaches (`query(<string>)` vs `assign(<lambda>)`)  
+{{< fa rectangle-xmark >}} mix of functional / object paradigms; copy / modify defaults  
+{{< fa rectangle-xmark >}} different workflows for similar results  
+
+> **Human Centered**: designed to support the activities of a human data analyst
+
+{{< fa rectangle-xmark >}} requires mental accounting of standard / index columns  
+{{< fa rectangle-xmark >}} not always idempotent  
+
+## Data Wrangling in `python`
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Pandas_logo.svg/1200px-Pandas_logo.svg.png)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Most popular in the wild    
+{{< fa square-check >}} Ample community support  
+{{< fa rectangle-xmark >}} Least comfortable ergonomics  
+{{< fa rectangle-xmark >}} Memory limitations (improving)  
+::::
+
+:::
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://raw.githubusercontent.com/pola-rs/polars-static/master/logos/polars_github_logo_rect_dark_name.svg)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Similar ergonomics *(you be the judge - shortly!)*  
+{{< fa square-check >}} Well-documented  
+{{< fa square-check >}} Fast!  
+{{< fa rectangle-xmark >}} Some learning curve  
+{{< fa rectangle-xmark >}} Growing adoptions but less legacy code than `pandas`
+::::
+
+:::
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://ibis-project.org/logo.svg)
+<center>(`ibis`)</center>
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Most direct `dplyr` port  
+{{< fa square-check >}} Translation layer to support many backends  
+{{< fa rectangle-xmark >}} Lower adoption  
+{{< fa rectangle-xmark >}} Earlier stage  
+::::
+
+:::
+
+## What to prioritize? Think about your *persona*
+  
+::: {.columns}
+
+:::: {.column}
+<center>{{< fa home size=5x >}}</center>
+### The Expat {.center-x}
+
+If you want to fully immerse, balance...
+
+- Ergonomics that transfer your skills
+- Prevalance in python community
+
+{{< fa arrow-right >}} Shortest *overall* learning curve
+::::
+
+:::: {.column}
+<center>{{< fa globe size=5x >}}</center>
+### The Tourist {.center-x}
+
+If you want to visit python rarely, favor...
+
+- Direct syntax copies
+- Accept tougher road beyond boilerplate
+
+{{< fa arrow-right >}} Shortest *initial* learning curve
+::::
+
+:::
+
+## What to prioritize? Think about your *persona*
+  
+::: {.columns}
+
+:::: {.column}
+<center>{{< fa home size=5x >}}</center>
+### The Expat {.center-x}
+
+If you want to fully immerse, balance...
+
+- Ergonomics that transfer your skills
+- Prevalance in python community
+
+{{< fa arrow-right >}} Shortest *overall* learning curve
+
+Start with `polars`, may need some `pandas`
+::::
+
+:::: {.column}
+<center>{{< fa globe size=5x >}}</center>
+### The Tourist {.center-x}
+
+If you want to visit python rarely, favor...
+
+- Direct syntax copies
+- Accept tougher road beyond boilerplate
+
+{{< fa arrow-right >}} Shortest *initial* learning curve
+
+Can probably lean on `ibis` or `siuba` (or `duckdb` if you like SQL!)
+::::
+
+:::
+
+## Data wrangling in `polars`
+
+Let's get some data!    
+
+```{python}
+import polars as pl 
+
+df = pl.DataFrame({'a':["1","1","2","2"], 
+                   'ind_b':[1,0,0,0], 
+                   'ind_c':[0,1,1,1]})
+df.head()
+```
+
+:::{.callout-tip}
+## Why fake data?
+Simulating silly, simple datasets is a great way to sanity check our understanding when using new syntax
+:::
+
+## What makes `polars` similar?
+
+## Basic functionality
+
+Same main "verbs" as `dplyr`
+
+:::: {.columns}
+
+::: {.column}
+
+**`dplyr`**
+
+*Single-Table*
+
+- `select()`
+- `filter()`
+- `mutate()`
+- `group_by()`
+- `summmarize()`
+
+*Multi-Table*
+
+- `bind_rows()`
+- `{left|inner|...}_join()`
+
+:::
+
+::: {.column}
+
+**`polars`**
+
+*Single-Table*
+
+- `select()`
+- `filter()`
+- `with_columns()`^[As in in `pyspark`]
+- `group_by()`^[Renamed from the `pandas`-inspired `groupby()` for API consistency!]
+- `agg()`^[As in `pyspark`]
+
+*Multi-Table*
+
+- `concat([])`
+- `join(how = <<left|inner|...>>)`^[With similar option validation & renaming parameters]
+
+:::
+
+:::: 
+
+## Basic composition
+
+**Method chaining** is the python equivalent of **piping** composable functions
+
+Instead of saying "apply x, then y, then z to value a" like this,
+
+```{python eval = FALSE}
+z(y(x(a)))
+```
+
+in the `tidyverse` we write
+
+```{r eval = FALSE}
+a %>% x() %>% y() %>% z()
+# or using the base pipe |> for R4.0.0+
+```
+
+and in `polars` we write
+
+```{python eval = FALSE}
+a.x().y().z()
+```
+
+## Basic composition
+
+And in `python`, we can break those chains across lines with parentheses:
+
+```{python eval = FALSE}
+(
+  a
+  .x()
+  .y()
+  .z()
+)
+```
+
+## Basic composition
+
+`polars` actually takes this a bit further
+
+In `dplyr`, we often chain *data-frame level functions* but nest *column-level functions*
+
+```{r eval = FALSE}
+# common 
+mutate(df, a_modified = z(y(x(a))))
+
+# less common
+mutate(df, a_modified = a %>% x() %>% y() %>% z() )
+```
+
+In `polars` more compact chaining allows us chain both
+
+```{python eval = FALSE}
+df.with_columns(a_modified = a.x().y().z())
+```
+
+## Basic `polars` in action
+
+```{python}
+(
+
+  df
+  .with_columns( 
+    x = pl.col('ind_b') * 3 ,
+    y = pl.col('ind_b') * 5 ,
+    z = pl.col('ind_b') * 7 
+    )
+  .select(pl.col('a'), pl.col('x'), pl.col('y'), pl.col('z'))
+  .filter(pl.col('a') <= '1')
+  .group_by( pl.col('a') )
+  .agg( 
+    pl.col('y').sum(), 
+    pl.col('z').mean() 
+  )
+
+)
+```
+
+## Advanced `polars` demo
+
+
+
+## Horizontal Functions
+
+In `dplyr`:
+
+```{r eval = FALSE}
+df %>%
+  rowwise() %>%
+  mutate( b_or_c = max(ind_b, ind_c) )
+```
+
+In `polars`:
+
+```{python}
+df.with_columns(
+  b_or_c = pl.max_horizontal(pl.col('ind_b'), pl.col('ind_c')) 
+)
+```
+
+## Column Selectors
+
+In `dplyr`:
+
+```{r eval = FALSE}
+df %>%
+  mutate( across( starts_with('ind'), mean ) ) 
+```
+
+In `polars`:
+
+```{python}
+import polars.selectors as cs
+
+df.with_columns(
+  cs.starts_with("ind").mean()
+)
+```
+
+## Column Selectors
+
+Renaming things
+```{python}
+df.with_columns(
+  cs.starts_with("ind").mean().prefix("p_")
+)
+``` 
+
+## Column Selectors
+
+Cleaning data 
+
+```{python}
+pl.DataFrame({
+  'x'    : 'a    ',
+  'y'    : ' b ',
+  'c'    : 'c',
+  'a_dt' : '09/25/1993',
+  'b_dt' : '06/20/2000'
+}).with_columns(
+  cs.string().str.strip().suffix("_clean"),
+  cs.ends_with('dt').str.to_datetime('%m/%d/%Y')
+)
+```
+
+## Window Functions
+
+In `dplyr`:
+
+```{r eval = FALSE}
+df %>%
+  group_by(a) %>%
+  mutate(min_b = min(ind_b))
+```
+
+In `polars`:
+
+```{python}
+df.with_columns(
+  min_b = pl.col('ind_b').min().over('a')
+)
+```
+
+## List Columns 
+
+In `polars`:
+
+```{python}
+df.with_columns(list_col = pl.struct( cs.integer() ))
+```
+
+```{python}
+df.group_by('a').agg(list_col = pl.struct( cs.integer() ) )
+```
+
+## Breaking `polars` - no abstraction is perfect
+
+Opposite challenge of `dplyr`: Can be overeager to parse strings as names
+```{python}
+df.with_columns(z = 'a')
+```
+
+Can fix by wrapping strings in `pl.lit()`
+```{python}
+df.with_columns(z = pl.lit('a'))
+```
+
+## Data Viz in `python`
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://matplotlib.org/_static/logo_light.svg)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Most popular in the wild    
+{{< fa square-check >}} Ample community support  
+{{< fa rectangle-xmark >}} Incredibly procedural ("draw this line here")
+::::
+
+:::
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://seaborn.pydata.org/_static/logo-wide-lightbg.svg)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Similar ergonomics in objects interface  
+{{< fa square-check >}} Uses `matplotlib` under hood for further customization  
+{{< fa square-check >}} Reasonable defaults outside of objects interface  
+{{< fa rectangle-xmark >}} Objects interface is experimental and unstable at times  
+::::
+
+:::
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://plotnine.readthedocs.io/en/v0.12.4/_images/logo-540.png)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Most direct `ggplot2` port  
+{{< fa square-check >}} Also `matplotlib` under the hood  
+{{< fa rectangle-xmark >}} Lower adoption  
+{{< fa rectangle-xmark >}} Abstraction occasionally "breaks"  
+::::
+
+:::
+
+## Data Tables in `python`
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+<center>{{< fa question size=8x >}}</center>
+::::
+
+:::: {.column width="80%"} 
+{{< fa rectangle-xmark >}} Shocking lack of dominant options
+::::
+
+:::
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="20%"}
+![](https://gt.rstudio.com/reference/figures/logo.svg)
+::::
+
+:::: {.column width="80%"}
+{{< fa square-check >}} Beautiful, flexible output  
+{{< fa square-check >}} Grammar-driven API  
+{{< fa rectangle-xmark >}} Not as fully featured as `gt` - yet!  
+::::
+
+:::
+
+&nbsp;
+
+## Don't forget about base! 
+
+Python's base is more comprehensive and faster changing than R
+
+One example: `f-strings` are like `{glue}` for string interpolation
+
+```{python}
+price = 10.27
+print(f"The cost is ${price}")
+print(f"The cost is around ${price:.0f}")
+print(f"The value of {price=}")
+```
+
+## Beyond the library and language, what's the lifestyle?
+
+&nbsp;
+
+What's **the whole game**?
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="33%"}
+### Setting Up
+
+- Too many install options
+- Missing RStudio's fit
+::::
+
+:::: {.column width="33%"}
+### Analysis
+
+- Clumsy wrangling and viz
+- No good tables 
+- Jupyter notebooks can't version control
+::::
+
+:::: {.column width="33%"}
+### Developer Experience
+
+- Managing environments
+- Getting "help"
+::::
+
+:::
+
+## Beyond the library and language, what's the lifestyle?
+
+&nbsp;
+
+What's **the whole game**?
+
+&nbsp;
+
+::: {.columns}
+
+:::: {.column width="33%"}
+### Setting Up
+
+- Too many install options
+  + `pyenv`^[And has anyone heard of [rig](https://github.com/r-lib/rig)?!]
+- Missing RStudio's fit
+  + VS Code^[Follow [Rami Krispin](https://github.com/RamiKrispin) for great demos and resources here!]
+::::
+
+:::: {.column width="33%"}
+### Analysis
+
+- Clumsy wrangling and viz
+  + `polars` and `seaborn`
+- No good tables 
+  + `greattables`
+- Jupyter notebooks can't version control
+  + `Quarto`
+::::
+
+:::: {.column width="33%"}
+### Developer Experience
+
+- Managing environments
+  + `pdm`^[Similar to [`renv`](https://rstudio.github.io/renv/articles/renv.html)]
+- Getting "help"
+  + `ruff` (linting, styling)
+  + `ErrorLens` (VSC add-on)
+::::
+
+:::
+
+## The ergonomics of a team sport
+
+**Communities**
+
+- [python Reddit](https://www.reddit.com/r/Python/)
+- Many great channels in language-agnostic DS communities
+
+**Books**
+
+- [Python Packages](https://py-pkgs.org/)
+- [pyOpenSci Packaging Guide](https://www.pyopensci.org/python-package-guide/documentation/index.html)
+
+**Podcasts**
+
+- [Talk Python](https://talkpython.fm/): Deep dives with developers
+- [Real Python](https://realpython.com/podcasts/rpp/): Article summaries/roundups
+- [Podcast._init_](https://podcasts.apple.com/us/podcast/the-python-podcast-init/id981834425?at=&ct=&ign-mpt=uo%3D6&mt=2): Detailed discussions of specific python packages (Stopped in 2022)
+
+
+## Thank you! 
+
+&nbsp;
+&nbsp;
+
+:::{.center}
+Interested for more? This is a topic I hope to keep exploring on my blog this year:
+:::
+
+{{< fa square-check >}}  [Python Rgonomics](https://www.emilyriederer.com/post/py-rgo/)  
+{{< fa square-check >}}  [Base Python Rgonomic Patterns](https://www.emilyriederer.com/post/py-rgo-base/)  
+{{< fa square-check >}}  [`polars`' Rgonomic Patterns](https://www.emilyriederer.com/post/py-rgo-polars/)  
+{{< fa circle-question >}}  Seaborn Objects and Plotnine  
+{{< fa circle-question >}}  Environment management with `pdm`  
+    
+&nbsp; 
+&nbsp;
+
+::: {.center}
+Going on a similar journey? Have thoughts to share? Please get in touch! 
+:::
+
+{{< fa envelope-open >}} emilyriederer@gmail.com  
+{{< fa brands twitter >}} [@emilyriederer](https://twitter.com/emilyriederer)  
+{{< fa brands linkedin >}} [@emilyriederer](https://linkedin.com/in/emilyriederer)  
+{{< fa brands mastodon >}} [@emilyriederer](https://mastodon.social/@emilyriederer)  

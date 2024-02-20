@@ -1,0 +1,18 @@
+[project]
+name = "pyrgo-rladies"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Emily Riederer", email = "emilyriederer@gmail.com"},
+]
+dependencies = [
+    "polars>=0.20.6",
+    "jupyter>=1.0.0",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false

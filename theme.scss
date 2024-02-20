@@ -1,0 +1,56 @@
+/*-- scss:defaults --*/
+$theme-blue: #3b86f7;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+
+// fonts
+$font-family-sans-serif: "Montserrat","Palatino Linotype", "Book Antiqua", Palatino,
+  FreeSerif, serif !default;
+$font-family-monospace: "Roboto Mono" !default;
+$presentation-font-size-root: 20px;
+
+// headings
+$presentation-heading-font: "Montserrat","Palatino Linotype", "Book Antiqua", Palatino,
+  FreeSerif, serif !default;
+$presentation-heading-color: $theme-blue !default;
+
+// colors
+$body-bg: #f6f7f8 !default;
+$body-color: #000 !default;
+$link-color: goldenrod !default;
+$selection-bg: #26351c !default;
+$code-block-border-color: $theme-blue;
+
+/*-- scss:rules --*/
+
+.reveal a {
+  line-height: 1.5em;
+}
+
+code.sourceCode {
+  font-size: 1.5em;
+}
+
+i.fa-square-check {color: green;}
+i.fa-rectangle-xmark {color: darkred;}
+i.fa-star {color: goldenrod;}
+i.fa-thumbs-up {color: blue;}
+i.fa-circle-question {color: darkgrey}
+i.fa-arrow-right {color: $theme-blue;}
+i.fa-home {color: $theme-blue; text-align: center;}
+i.fa-globe {color: $theme-blue; text-align: center;}
+i.fa-question {color: darkgrey;}
+
+.column > h3 {text-align: center;}
+
+.center-x {text-align: center;}
+
+.center-xy {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translateY(-50%), translateX(-50%);
+  transform: translateY(-50%), translateX(-50%);
+}
