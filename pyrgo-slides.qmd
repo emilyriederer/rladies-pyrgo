@@ -5,6 +5,8 @@ date: "February 20, 2024"
 format: 
   revealjs:
     theme: theme.scss
+    slide-number: c/t
+    show-slide-number: all
 execute:
   freeze: auto
   echo: true
